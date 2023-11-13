@@ -1,15 +1,43 @@
 <template>
   <el-header>
-    <el-menu mode="horizontal" :ellipsis="false" router>
-       <el-menu-item index="0" :route="{name: 'Home' }">Accueil</el-menu-item> 
-    </el-menu>
+      <el-menu class="menu" mode="horizontal" :ellipsis="false" :default-active="activeIndex" router>
+        <div>
+          <el-menu-item index="0" :route="{ name: 'Home' }">Accueil</el-menu-item>
+          <el-menu-item v-if="loggedIn" index="1" :route="{ name: 'WatchList' }">WatchList</el-menu-item>
+          <el-menu-item v-if="loggedIn" index="2" :route="{ name: 'Profile'}">Profile</el-menu-item>
+        </div>
+        
+          <div>
+            <el-input v-model="input" placeholder="Film..." clearable />
+          </div>
+
+          <div>
+            <el-menu-item v-if="loggedIn" @click="logout">Se déconnecter</el-menu-item>
+          <el-menu-item v-else index="1" :route="{ name: 'Login' }">Se connecter</el-menu-item>
+          </div>
+          
+      </el-menu>
   </el-header>
 
-  <main>
-    <router-view />
-  </main>
+  <el-main>
+      <router-view></router-view>
+  </el-main>
 </template>
 
-<style scoped>
+<script setup>
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
+const router = useRouter();
+const store = useStore();
+
+</script>
+
+<style scoped>
+.menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 </style>

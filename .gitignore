@@ -1,6 +1,7 @@
 /backend/node_modules/
 /frontend/node_modules/
 /backend/database-shows.db
+.env
 
 # Logs
 *.log
