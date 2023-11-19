@@ -3,6 +3,8 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import Sequelize from 'sequelize';
 import { Server } from 'socket.io';
+import { TMDB_API_KEY } from 'env.js';
+const TMDB_URL = 'https://api.themoviedb.org/3/'
 
 // Initialisation serveur
 const app = express();
@@ -68,6 +70,26 @@ UsersActions.sync({ force: true }).then(() => console.log('Table UsersActions cr
 app.get('/', async (req, res) => {
     res.send('Server is OK');
 })
+
+// Récupération des films populaires
+app.get('/popularmovies', async (req, res) => {
+    try {
+        let response = await fetch(TMDB_URL+"/movie/popular?language=fr-FR&page=1", {
+            method: 'GET',
+            headers: {
+              accept: 'application/json',
+              Authorization: 'Bearer '+TMDB_API_KEY
+            }
+          })
+        .then(response => response.json())
+        return response;
+
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+
 
 /* Démarrage serveur */
 const server = app.listen(3000, () => {
