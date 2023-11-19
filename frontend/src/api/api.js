@@ -1,19 +1,12 @@
-import { TMDB_API_KEY } from '../../env.js';
-const TMDB_URL = 'https://api.themoviedb.org/3/'
+import axios from 'axios';
+const BDD_URL = 'http://localhost:3000/api/'
 
 export const getPopularMovie = async () => {
-    try {
-        let response = await fetch(TMDB_URL+"/movie/popular?language=fr-FR&page=1", {
-            method: 'GET',
-            headers: {
-              accept: 'application/json',
-              Authorization: 'Bearer '+TMDB_API_KEY
-            }
-          })
-        .then(response => response.json())
-        return response;
+  try {
+    const response = await axios.get(BDD_URL+"/popularmovie");
+    return response.data; 
+  } catch (error) {
+    console.error(error);
+  }
+}
 
-    } catch (error) {
-        console.log(error);
-    }
-};
