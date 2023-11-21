@@ -2,7 +2,9 @@
     <div class="carousel-container">
         <el-carousel :interval="2000" type="card" height="750px">
             <el-carousel-item v-for="(movie, index) in popularMovies" :key="index">
-                <img :src="getImageUrl(movie.poster_path)" :alt="movie.title">
+                <router-link :to="{ name: 'Movie', params: { id: movie.id }}">
+                    <img :src="getImageUrl(movie.poster_path)" :alt="movie.title">
+                </router-link>
             </el-carousel-item>
         </el-carousel>
     </div>
@@ -10,7 +12,7 @@
 
 <style scoped>
 .carousel-container {
-  text-align: center;
+    text-align: center;
 }
 </style>
 
