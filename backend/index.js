@@ -87,7 +87,26 @@ app.get('/popularmovies', async (req, res) => {
         res.json(data);
     } catch (error) {
         console.log(error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).send('Internal Server Error with popularmovies');
+    }
+});
+
+// Récupération du film avec son ID
+app.get('/movie/:id', async (req,res) => {
+    const id = req.params.id;
+    try {
+        const response = await fetch(TMDB_URL+"/movie/"+id, {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+                Authorization: 'Bearer '+TMDB_API_KEY
+            }
+        });
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error with movie');
     }
 });
 
