@@ -2,8 +2,9 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import Sequelize from 'sequelize';
+import fetch from 'node-fetch';
 import { Server } from 'socket.io';
-import { TMDB_API_KEY } from 'env.js';
+import { TMDB_API_KEY } from './env.js';
 const TMDB_URL = 'https://api.themoviedb.org/3/'
 
 // Initialisation serveur
@@ -74,18 +75,19 @@ app.get('/', async (req, res) => {
 // Récupération des films populaires
 app.get('/popularmovies', async (req, res) => {
     try {
-        let response = await fetch(TMDB_URL+"/movie/popular?language=fr-FR&page=1", {
+        const response = await fetch(TMDB_URL+"/movie/popular?language=fr-FR&page=1", {
             method: 'GET',
             headers: {
-              accept: 'application/json',
-              Authorization: 'Bearer '+TMDB_API_KEY
+                accept: 'application/json',
+                Authorization: 'Bearer '+TMDB_API_KEY
             }
-          })
-        .then(response => response.json())
-        return response;
-
+        });
+        
+        const data = await response.json();
+        res.json(data);
     } catch (error) {
         console.log(error);
+        res.status(500).send('Internal Server Error');
     }
 });
 
