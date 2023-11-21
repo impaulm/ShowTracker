@@ -10,6 +10,8 @@ const TMDB_URL = 'https://api.themoviedb.org/3/'
 // Initialisation serveur
 const app = express();
 
+app.use(bodyParser.json());
+
 // Sécurité
 app.use(cors());
 
@@ -19,6 +21,7 @@ const sequelize = new Sequelize('sqlite:database-shows.db');
 // Modèle de la base de données Users
 const Users = sequelize.define('user', {
     userID: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+    username: { type: Sequelize.STRING },
     email: { type: Sequelize.STRING, unique: true },
     password: { type: Sequelize.STRING },
 });
@@ -88,6 +91,43 @@ app.get('/popularmovies', async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
+    }
+});
+
+app.post('/register', async (req, res) => {
+
+    console.log(req.body);
+
+    const { username, email, password } = req.body;
+    try {
+        const user = await Users.create({
+            username,
+            email,
+            password,
+        });
+        res.json(user);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.post('/login', async (req, res) => {
+    const { email, hashedPassword: password } = req.body;
+    try {
+        const user = await Users.findOne({
+            where: {
+                email,
+                password,
+            },
+        });
+        if (user.length) {
+            res.status(200).send('Connexion réussie');
+        } else {
+            res.status(403).send('Connexion impossible');
+        }
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
     }
 });
 

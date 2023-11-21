@@ -3,6 +3,7 @@ import { useStore } from 'vuex';
 
 import Home from '../pages/Home.vue';
 import Login from '../pages/Login.vue';
+import Register from '../pages/Register.vue';
 
 export const router = createRouter({
     routes: [
@@ -17,6 +18,11 @@ export const router = createRouter({
             component: Login,
 
         },
+        {
+            path: '/register',
+            name: 'Register',
+            component: Register,
+        }
     ],
     history: createWebHistory(),
 });

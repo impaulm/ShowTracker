@@ -13,7 +13,10 @@
 
           <div>
             <el-menu-item v-if="loggedIn" @click="logout">Se déconnecter</el-menu-item>
-          <el-menu-item v-else index="1" :route="{ name: 'Login' }">Se connecter</el-menu-item>
+            <div class="button-container" v-if="!loggedIn">
+              <el-menu-item :index="1" :route="{ name: 'Login' }">Se connecter</el-menu-item>
+              <el-menu-item :index="2" :route="{ name: 'Register' }">S'inscrire</el-menu-item>
+            </div>
           </div>
           
       </el-menu>
@@ -40,4 +43,9 @@ const store = useStore();
   justify-content: space-between;
   align-items: center;
 }
+
+.button-container {
+    display: flex;
+    gap: 5px; /* Espace entre les boutons */
+  }
 </style>
