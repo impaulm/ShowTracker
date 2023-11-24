@@ -95,7 +95,7 @@ app.get('/popularmovies', async (req, res) => {
 app.get('/movie/:id', async (req,res) => {
     const id = req.params.id;
     try {
-        const response = await fetch(TMDB_URL+"/movie/"+id, {
+        const response = await fetch(TMDB_URL+"/movie/"+id+"?language=fr-FR", {
             method: 'GET',
             headers: {
                 accept: 'application/json',

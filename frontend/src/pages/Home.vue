@@ -1,18 +1,35 @@
 <template>
-    <div class="carousel-container">
-        <el-carousel :interval="2000" type="card" height="750px">
-            <el-carousel-item v-for="(movie, index) in popularMovies" :key="index">
-                <router-link :to="{ name: 'Movie', params: { id: movie.id }}">
-                    <img :src="getImageUrl(movie.poster_path)" :alt="movie.title">
-                </router-link>
-            </el-carousel-item>
-        </el-carousel>
+    <div class="container">
+        <div class="carousel-container">
+            <el-carousel :interval="2000" type="card" height="100vh">
+                <el-carousel-item class="carousel-item" v-for="(movie, index) in popularMovies" :key="index">
+                    <router-link :to="{ name: 'Movie', params: { id: movie.id } }">
+                        <img class="poster-movie" :src="getImageUrl(movie.poster_path)" :alt="movie.title">
+                    </router-link>
+                </el-carousel-item>
+            </el-carousel>
+        </div>  
     </div>
 </template>
 
 <style scoped>
+.container{
+    width: 80vw;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100vh;
+}
 .carousel-container {
     text-align: center;
+}
+
+.carousel-container .carousel-item {
+    max-width: 100%;
+}
+
+.poster-movie {
+    width: 100%;
+    height: 100%;
 }
 </style>
 
