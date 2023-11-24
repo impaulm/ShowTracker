@@ -58,11 +58,6 @@ UsersActions.belongsTo(Films, {
 // Création de la base de données
 Users.sync({ force: true }).then(() => {
     console.log('Table Users créée');
-
-    Users.create({
-        email: 'a.b@gmail.com',
-        password: '1234',
-    });
 });
 
 Films.sync({ force: true }).then(() => console.log('Table Films créée'));
