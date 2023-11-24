@@ -13,7 +13,7 @@
         </div>
         
         <div>
-          <el-input v-model="input" placeholder="Film..." clearable />
+          <Recherche />
         </div>
 
         <div>
@@ -36,6 +36,7 @@
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
+import Recherche from './components/Recherche.vue';
 
 const router = useRouter();
 const store = useStore();
@@ -46,6 +47,7 @@ const logout = () => {
     store.dispatch('logout');
     router.push({ name: 'Login' });
 };
+
 </script>
 
 <style scoped>

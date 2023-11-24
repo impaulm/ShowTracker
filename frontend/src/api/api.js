@@ -10,3 +10,12 @@ export const getPopularMovie = async () => {
     console.error(error);
   }
 };
+
+export const getSearchedMovie = async () => {
+  try {
+    const response = await axios.get(BDD_URL + "/searchedmovies");
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};

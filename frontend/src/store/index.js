@@ -13,6 +13,9 @@ export const store = createStore({
         popularMovies: state => {
             return state.popularMovies;
         },
+        searchedMovies: state => {
+            return state.searchedMovies;
+        },
         loggedIn: state => {
             return state.loggedIn;
         },
@@ -24,6 +27,9 @@ export const store = createStore({
     mutations: {
         getPopularMovies (state, popularMovies) {
             state.popularMovies = popularMovies
+        },
+        getSearchedMovies (state, searchedMovies) {
+            state.searchedMovies = searchedMovies
         },
         login (state, username) {
             state.loggedIn = true;
@@ -39,6 +45,10 @@ export const store = createStore({
         async loadPopularMovies ({ commit }) {
             const response = await getPopularMovie();
             commit('getPopularMovies', response.results)
+        },
+        async loadSearchedMovies ({ commit }, searchedMovies) {
+            const response = await getSearchedMovie(searchedMovies);
+            commit('getSearchedMovies', searchedMovies)
         },
         login: ({ commit }, username) => {
             localStorage.setItem('username', username);
