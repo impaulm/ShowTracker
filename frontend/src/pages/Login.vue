@@ -36,9 +36,13 @@ const form = reactive({ username: '', password: '' });
 const login = async () => {
     const { username, password } = form;
     const hashedPassword = sha256(password);
+    console.log(hashedPassword);
 
     try {
-        await axios.post('http://localhost:3000/login', { username, hashedPassword });
+        await axios.post('http://localhost:3000/login', { 
+            username: username, 
+            password: hashedPassword 
+        });
 
         store.dispatch('login', username);
         router.push({ name: 'Home' });

@@ -113,15 +113,16 @@ app.post('/register', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-    const { email, hashedPassword: password } = req.body;
+    const { username, password } = req.body;
+
     try {
-        const user = await Users.findOne({
+        const user = await Users.findAll({
             where: {
-                email,
+                username,
                 password,
-            },
+            }
         });
-        if (user.length) {
+        if (user.length > 0) {
             res.status(200).send('Connexion réussie');
         } else {
             res.status(403).send('Connexion impossible');

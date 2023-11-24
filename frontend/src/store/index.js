@@ -40,11 +40,13 @@ export const store = createStore({
             const response = await getPopularMovie();
             commit('getPopularMovies', response.results)
         },
-        login ({ commit }, username) {
+        login: ({ commit }, username) => {
+            localStorage.setItem('username', username);
             commit('login', username);
         },
-        logout ({ commit }) {
+        logout: ({ commit }) => {
+            localStorage.removeItem('username');
             commit('logout');
-        }
+        },
     }
 });

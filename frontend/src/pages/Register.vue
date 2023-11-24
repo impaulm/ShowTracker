@@ -54,7 +54,7 @@ const register = async () => {
 
         const data = response;
 
-        if (data.success) {
+        if (data.status === 200) {
             ElMessage.success('Inscription réussie !');
             router.push({ name: 'Login' });
         } else {
