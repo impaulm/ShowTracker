@@ -6,11 +6,20 @@ export const store = createStore({
         popularMovies: [],
         movie: null,
         loading: true,
+        loggedIn: localStorage.getItem('username') !== null,
+        username: localStorage.getItem('username') || '',
+
     },
 
     getters: {
         popularMovies: state => {
             return state.popularMovies;
+        },
+        loggedIn: state => {
+            return state.loggedIn;
+        },
+        username: state => {
+            return state.username;
         },
 
         loading: state => {
@@ -25,6 +34,14 @@ export const store = createStore({
     mutations: {
         getPopularMovies (state, popularMovies) {
             state.popularMovies = popularMovies
+        },
+        login (state, username) {
+            state.loggedIn = true;
+            state.username = username;
+        },
+        logout (state) {
+            state.loggedIn = false;
+            state.username = '';
         },
 
         getMovie (state, movie) {
@@ -41,6 +58,14 @@ export const store = createStore({
         async loadPopularMovies ({ commit }) {
             const response = await getPopularMovies();
             commit('getPopularMovies', response.results)
+        },
+        login: ({ commit }, username) => {
+            localStorage.setItem('username', username);
+            commit('login', username);
+        },
+        logout: ({ commit }) => {
+            localStorage.removeItem('username');
+            commit('logout');
         },
 
         async getMovie ({ commit }, movieId) {
