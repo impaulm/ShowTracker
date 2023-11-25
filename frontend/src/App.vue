@@ -26,10 +26,7 @@
           
       </el-menu>
   </el-header>
-
-  <el-main>
-      <router-view></router-view>
-  </el-main>
+  <router-view></router-view>
 </template>
 
 <script setup>

@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import { getPopularMovies, getMovieById } from '../api/api';
+import { getPopularMovies, getMovieById, getTrailersById } from '../api/api';
 
 export const store = createStore({
     state: {
@@ -8,7 +8,7 @@ export const store = createStore({
         loading: true,
         loggedIn: localStorage.getItem('username') !== null,
         username: localStorage.getItem('username') || '',
-
+        trailers: null,
     },
 
     getters: {
@@ -28,6 +28,9 @@ export const store = createStore({
 
         movie: state => {
             return state.movie;
+        },
+        trailers: state => {
+            return state.trailers;
         },
     },
 
@@ -52,6 +55,9 @@ export const store = createStore({
         setLoading (state, loading) {
             state.loading = loading
         },
+        trailers (state, trailers) {
+            state.trailers = trailers
+        }
     },
 
     actions: {
@@ -73,5 +79,10 @@ export const store = createStore({
             const response = await getMovieById(movieId);
             commit('getMovie', response)
         },
+
+        async getTrailersById ({ commit }, movieId) {
+            const response = await getTrailersById(movieId);
+            commit('trailers', response)
+        }
     }
 });

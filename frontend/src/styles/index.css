@@ -5,3 +5,11 @@ body{
     color: white;
     font-family: 'Roboto', sans-serif; 
 }
+
+.el-main{
+    padding: 0;
+}
+
+.el-header{
+    padding: 0;
+}

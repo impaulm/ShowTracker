@@ -20,3 +20,18 @@ export const getMovieById = async(id) => {
     console.error(error);
   }
 }
+
+export const getTrailersById = async(id) => {
+  if(!id) return;
+  try {
+    const response = await axios.get(BDD_URL+"/movie/"+id+"/videos")
+    for (let i = 0; i < response.data.results.length; i++) {
+      if (response.data.results[i].type === "Trailer") {
+        return response.data.results[i];
+      }
+      return response.data.results[0];
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}

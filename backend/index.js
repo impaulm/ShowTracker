@@ -108,6 +108,7 @@ app.get('/movie/:id', async (req,res) => {
     }
 });
 
+// Création d'un utilisateur
 app.post('/register', async (req, res) => {
 
     console.log(req.body);
@@ -126,6 +127,7 @@ app.post('/register', async (req, res) => {
     }
 });
 
+// Connexion d'un utilisateur
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
@@ -143,6 +145,25 @@ app.post('/login', async (req, res) => {
         }
     } catch (err) {
         return res.status(500).json({ message: err.message });
+    }
+});
+
+// Récupération des trailers du film avec son ID
+app.get('/movie/:id/videos', async (req,res) => {
+    const id = req.params.id;
+    try {
+        const response = await fetch(TMDB_URL+"/movie/"+id+"/videos?language=fr-FR", {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+                Authorization: 'Bearer '+TMDB_API_KEY
+            }
+        });
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error with movie');
     }
 });
 
