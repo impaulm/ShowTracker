@@ -11,9 +11,14 @@ export const getPopularMovie = async () => {
   }
 };
 
-export const getSearchedMovie = async () => {
+export const getSearchedMovie = async (searchedMovies) => {
   try {
-    const response = await axios.get(BDD_URL + "/searchedmovies");
+    const response = await axios.get(BDD_URL + "/searchedmovies", {
+      params: {
+        query: searchedMovies
+      }
+    });
+    // console.log(response.data);
     return response.data;
   } catch (error) {
     console.error(error);

@@ -1,11 +1,13 @@
 import { createStore } from 'vuex';
 import { getPopularMovie } from '../api/api';
+import { getSearchedMovie } from '../api/api';
 
 export const store = createStore({
     state: {
         popularMovies: [],
         loggedIn: localStorage.getItem('username') !== null,
         username: localStorage.getItem('username') || '',
+        searchedMovies: [],
 
     },
 
@@ -14,6 +16,7 @@ export const store = createStore({
             return state.popularMovies;
         },
         searchedMovies: state => {
+            console.log(state.searchedMovies);
             return state.searchedMovies;
         },
         loggedIn: state => {
@@ -48,7 +51,7 @@ export const store = createStore({
         },
         async loadSearchedMovies ({ commit }, searchedMovies) {
             const response = await getSearchedMovie(searchedMovies);
-            commit('getSearchedMovies', searchedMovies)
+            commit('getSearchedMovies', response)
         },
         login: ({ commit }, username) => {
             localStorage.setItem('username', username);
