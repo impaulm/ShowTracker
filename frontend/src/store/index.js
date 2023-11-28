@@ -5,7 +5,8 @@ export const store = createStore({
     state: {
         popularMovies: [],
         movie: null,
-        loading: true,
+        loadingMovie: true,
+        loadingTrailers: true,
         loggedIn: localStorage.getItem('username') !== null,
         username: localStorage.getItem('username') || '',
         trailers: null,
@@ -22,8 +23,12 @@ export const store = createStore({
             return state.username;
         },
 
-        loading: state => {
-            return state.loading;
+        loadingMovie: state => {
+            return state.loadingMovie;
+        },
+
+        loadingTrailers: state => {
+            return state.loadingTrailers;
         },
 
         movie: state => {
@@ -47,24 +52,26 @@ export const store = createStore({
             state.username = '';
         },
 
-        getMovie (state, movie) {
-            state.movie = movie
-            state.loading = false
+        setLoadingMovie (state, loadingMovie) {
+            state.loadingMovie = loadingMovie
         },
 
-        setLoading (state, loading) {
-            state.loading = loading
+        setLoadingTrailers (state, loadingTrailers) {
+            state.loadingTrailers = loadingTrailers
         },
-        trailers (state, trailers) {
+
+        getMovie (state, movie) {
+            state.movie = movie
+            state.loadingMovie = false
+        },
+        
+        getTrailers (state, trailers) {
             state.trailers = trailers
+            state.loadingTrailers = false
         }
     },
 
     actions: {
-        async loadPopularMovies ({ commit }) {
-            const response = await getPopularMovies();
-            commit('getPopularMovies', response.results)
-        },
         login: ({ commit }, username) => {
             localStorage.setItem('username', username);
             commit('login', username);
@@ -74,15 +81,22 @@ export const store = createStore({
             commit('logout');
         },
 
+        async loadPopularMovies ({ commit }) {
+            const response = await getPopularMovies();
+            commit('getPopularMovies', response.results)
+        },
+
         async getMovie ({ commit }, movieId) {
-            commit('setLoading',true)
+            commit('setLoadingMovie',true);
             const response = await getMovieById(movieId);
             commit('getMovie', response)
         },
 
-        async getTrailersById ({ commit }, movieId) {
+
+        async getTrailers ({ commit }, movieId) {
+            commit('setLoadingTrailers',true);
             const response = await getTrailersById(movieId);
-            commit('trailers', response)
-        }
+            commit('getTrailers', response)
+        },
     }
 });

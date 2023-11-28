@@ -1,6 +1,6 @@
 <template>
     <el-main>
-        <div class="background-image" v-if="!loading"
+        <div class="background-image" v-if="!loadingMovie"
             :style="{ backgroundImage: 'url(' + getImageUrl('/original' + movie.backdrop_path) + ')' }">
             <el-row class="film-globalinfo">
                 <el-col :span="6" class="poster-img"
@@ -15,7 +15,7 @@
                     <el-row class="gender-list">
                         <el-tag type="info" v-for="(genre, index) in movie.genres" :key="index">{{ genre.name }}</el-tag>
                     </el-row>
-                    <el-row>
+                    <el-row v-if="loggedIn">
                         <el-button type="warning" plain>
                             <el-icon :size="30">
                                 <CollectionTag />
@@ -37,10 +37,10 @@
             </el-row>
         </div>
         <el-row class="trailer" justify="center">
-            <div>
+            <div v-if="!loadingTrailers && trailers">
                 <iframe width="896" height="504" :src="getYouTubeEmbedUrl(trailers.key)" frameborder="0"
                     allowfullscreen></iframe>
-            </div>
+            </div> 
         </el-row>
     </el-main>
 </template>
@@ -56,12 +56,15 @@ const route = useRoute();
 onMounted(() => {
     const movieId = route.params.id;
     store.dispatch('getMovie', movieId);
-    store.dispatch('getTrailersById', movieId);
+    store.dispatch('getTrailers', movieId);
 });
 
 const movie = computed(() => store.getters.movie);
 const trailers = computed(() => store.getters.trailers);
-const loading = computed(() => store.getters.loading);
+const loadingMovie = computed(() => store.getters.loadingMovie);
+const loadingTrailers = computed(() => store.getters.loadingTrailers);
+
+const loggedIn = computed(() => store.getters.loggedIn);
 
 const formatYear = (value) => {
     const date = new Date(value);
