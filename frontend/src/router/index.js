@@ -5,6 +5,7 @@ import Home from '../pages/Home.vue';
 import Login from '../pages/Login.vue';
 import Movie from '../pages/Movie.vue';
 import Register from '../pages/Register.vue';
+import Watchlist from '../pages/Watchlist.vue'
 
 export const router = createRouter({
     routes: [
@@ -28,7 +29,13 @@ export const router = createRouter({
             path: '/register',
             name: 'Register',
             component: Register,
-        }
+        },
+
+        {
+            path: '/watchlist',
+            name: 'Watchlist',
+            component: Watchlist,
+        },
     ],
     history: createWebHistory(),
 });

@@ -14,7 +14,7 @@ export const getPopularMovies = async () => {
 export const getMovieById = async(id) => {
   if(!id) return;
   try {
-    const response = await axios.get(BDD_URL+"/movie/"+id,)
+    const response = await axios.get(BDD_URL+"/movie/"+id)
     return response.data;
   } catch (error) {
     console.error(error);
@@ -35,3 +35,40 @@ export const getTrailersById = async(id) => {
     console.error(error);
   }
 }
+
+export const getWatchListMovie = async(id) =>  {
+  if(!id) return;
+  try {
+    const response = await axios.get(BDD_URL+"/watchlist/"+id)
+    return response;
+  } catch (error) {
+    
+  }
+}
+
+export const getWatchedMovie = async(id) =>  {
+  if(!id) return;
+  try {
+    const response = await axios.get(BDD_URL+"/watchedmovie/"+id)
+    return response;
+  } catch (error) {
+    
+  }
+}
+
+export const watched = async(userId, movieId) => {
+  if(!userId || !movieId) return;
+  try {
+    const response = await axios.post(BDD_URL+"/testwatchlist",{
+      userId: userId,
+      movieId: movieId,
+    });
+  } catch (error) {
+    
+  }
+}
+
+export const watchList = async(userId, movieId) => {
+
+}
+

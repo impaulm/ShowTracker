@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import { getPopularMovies, getMovieById, getTrailersById } from '../api/api';
+import { getPopularMovies, getMovieById, getTrailersById, getWatchListMovie, getWatchedMovie } from '../api/api';
 
 export const store = createStore({
     state: {
@@ -7,9 +7,11 @@ export const store = createStore({
         movie: null,
         loadingMovie: true,
         loadingTrailers: true,
-        loggedIn: localStorage.getItem('username') !== null,
-        username: localStorage.getItem('username') || '',
+        loggedIn: localStorage.getItem('user') !== null,
+        user: localStorage.getItem('user') || null,
         trailers: null,
+        watchList: [],
+        watchedMovie: [],
     },
 
     getters: {
@@ -19,8 +21,8 @@ export const store = createStore({
         loggedIn: state => {
             return state.loggedIn;
         },
-        username: state => {
-            return state.username;
+        user: state => {
+            return state.user;
         },
 
         loadingMovie: state => {
@@ -37,19 +39,25 @@ export const store = createStore({
         trailers: state => {
             return state.trailers;
         },
+        watchList: state => {
+            return state.watchList;
+        },
+        watchedMovie: state => {
+            return state.watchedMovie;
+        },
     },
 
     mutations: {
         getPopularMovies (state, popularMovies) {
             state.popularMovies = popularMovies
         },
-        login (state, username) {
+        login (state, user) {
             state.loggedIn = true;
-            state.username = username;
+            state.user = user;
         },
         logout (state) {
             state.loggedIn = false;
-            state.username = '';
+            state.user = null;
         },
 
         setLoadingMovie (state, loadingMovie) {
@@ -68,16 +76,24 @@ export const store = createStore({
         getTrailers (state, trailers) {
             state.trailers = trailers
             state.loadingTrailers = false
-        }
+        },
+
+        getWatchListMovie (state, watchList){
+            state.watchList = watchList;
+        },
+
+        getWatchedMovie (state, watchedMovie){
+            state.watchedMovie = watchedMovie;
+        },
     },
 
     actions: {
-        login: ({ commit }, username) => {
-            localStorage.setItem('username', username);
-            commit('login', username);
+        login: ({ commit }, user) => {
+            localStorage.setItem('user', user);
+            commit('login', user);
         },
         logout: ({ commit }) => {
-            localStorage.removeItem('username');
+            localStorage.removeItem('user');
             commit('logout');
         },
 
@@ -97,6 +113,17 @@ export const store = createStore({
             commit('setLoadingTrailers',true);
             const response = await getTrailersById(movieId);
             commit('getTrailers', response)
+        },
+
+        async getWatchListMovie ({commit}, userId)
+        {
+            const response = await getWatchListMovie(userId);
+            commit('getWatchListMovie', response)
+        },
+
+        async getWatchedMovie ({commit}, userId){
+            const response = await getWatchedMovie(userId);
+            commit('getWatchedMovie', response)
         },
     }
 });

@@ -36,15 +36,13 @@ const form = reactive({ username: '', password: '' });
 const login = async () => {
     const { username, password } = form;
     const hashedPassword = sha256(password);
-    console.log(hashedPassword);
 
     try {
-        await axios.post('http://localhost:3000/login', { 
+        const response = await axios.post('http://localhost:3000/login', { 
             username: username, 
             password: hashedPassword 
         });
-
-        store.dispatch('login', username);
+        store.dispatch('login', response.data);
         router.push({ name: 'Home' });
     } catch (e) {
         ElMessage.error('Mauvais nom d\'utilisateur ou mot de passe');

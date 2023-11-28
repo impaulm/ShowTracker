@@ -6,7 +6,7 @@
             <el-menu-item :index="0" :route="{ name: 'Home' }">
               <img src="/LogoShowTracker.png" style="width: 60px"/>
             </el-menu-item>
-            <el-menu-item :index="1" :route="{ name: 'WatchList' }">WatchList</el-menu-item>
+            <el-menu-item :index="1" :route="{ name: 'Watchlist' }">WatchList</el-menu-item>
             <el-menu-item :index="2" :route="{ name: 'Profile'}">Profile</el-menu-item>
           </div>
           <el-menu-item v-else :index="0" :route="{ name: 'Home' }">Accueil</el-menu-item>

@@ -16,13 +16,13 @@
                         <el-tag type="info" v-for="(genre, index) in movie.genres" :key="index">{{ genre.name }}</el-tag>
                     </el-row>
                     <el-row v-if="loggedIn">
-                        <el-button type="warning" plain>
+                        <el-button type="warning" plain @click="watchList(user.userID, movie.id)">
                             <el-icon :size="30">
                                 <CollectionTag />
                             </el-icon>
                             Ajouter à la WatchList
                         </el-button>
-                        <el-button type="success" plain>
+                        <el-button type="success" plain @click="watched(user.userID, movie.id)">
                             <el-icon :size="30">
                                 <CircleCheck />
                             </el-icon>
@@ -49,10 +49,11 @@
 import { computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
-
+import { watched, watchList } from '../api/api.js';
 
 const store = useStore();
 const route = useRoute();
+
 onMounted(() => {
     const movieId = route.params.id;
     store.dispatch('getMovie', movieId);
@@ -63,6 +64,8 @@ const movie = computed(() => store.getters.movie);
 const trailers = computed(() => store.getters.trailers);
 const loadingMovie = computed(() => store.getters.loadingMovie);
 const loadingTrailers = computed(() => store.getters.loadingTrailers);
+
+const user = computed(() => store.getters.user);
 
 const loggedIn = computed(() => store.getters.loggedIn);
 
