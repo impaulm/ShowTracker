@@ -89,6 +89,28 @@ app.get('/popularmovies', async (req, res) => {
     }
 });
 
+// Récupération des films recherchés
+app.get('/searchedmovies', async (req, res) => {
+    console.log(req.query.query);
+    try {
+        // console.log(TMDB_URL+"search/movie?query="+req.query.query+"&include_adult=false&language=fr-FR&page=1");
+        const response = await fetch(TMDB_URL+"search/movie?query="+req.query.query+"&include_adult=false&language=fr-FR&page=1", {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+                Authorization: 'Bearer '+TMDB_API_KEY
+            }
+        });
+        
+        const data = await response.json();
+        // console.log(data.results);
+        res.json(data.results);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error with popularmovies');
+    }
+});
+
 // Récupération du film avec son ID
 app.get('/movie/:id', async (req,res) => {
     const id = req.params.id;

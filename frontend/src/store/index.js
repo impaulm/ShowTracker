@@ -1,5 +1,6 @@
 import { createStore } from 'vuex';
 import { getPopularMovies, getMovieById, getTrailersById } from '../api/api';
+import { getSearchedMovie } from '../api/api';
 
 export const store = createStore({
     state: {
@@ -9,12 +10,18 @@ export const store = createStore({
         loadingTrailers: true,
         loggedIn: localStorage.getItem('username') !== null,
         username: localStorage.getItem('username') || '',
-        trailers: null,
+        trailers: null,        
+        searchedMovies: [],
+
     },
 
     getters: {
         popularMovies: state => {
             return state.popularMovies;
+        },
+        searchedMovies: state => {
+            console.log(state.searchedMovies);
+            return state.searchedMovies;
         },
         loggedIn: state => {
             return state.loggedIn;
@@ -42,6 +49,9 @@ export const store = createStore({
     mutations: {
         getPopularMovies (state, popularMovies) {
             state.popularMovies = popularMovies
+        },
+        getSearchedMovies (state, searchedMovies) {
+            state.searchedMovies = searchedMovies
         },
         login (state, username) {
             state.loggedIn = true;
@@ -72,6 +82,14 @@ export const store = createStore({
     },
 
     actions: {
+        async loadPopularMovies ({ commit }) {
+            const response = await getPopularMovie();
+            commit('getPopularMovies', response.results)
+        },
+        async loadSearchedMovies ({ commit }, searchedMovies) {
+            const response = await getSearchedMovie(searchedMovies);
+            commit('getSearchedMovies', response)
+        },
         login: ({ commit }, username) => {
             localStorage.setItem('username', username);
             commit('login', username);
