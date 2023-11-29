@@ -1,6 +1,6 @@
 <template>
   <div class="search-container">
-    <input v-model="searchTerm" @input="handleSearch" placeholder="Rechercher un film">
+    <input v-model="searchTerm" @input="handleSearch" @click="showResults" placeholder="Rechercher un film">
       <ul class="search-results">
         <li v-for="(movie, index) in searchResults" :key="index" @click="selectMovie(movie)">
           {{ movie.title }}
@@ -11,6 +11,7 @@
 
 <script setup>
 import { computed, ref } from 'vue';
+import { routerKey } from 'vue-router';
 import { useStore } from 'vuex';
 
 const store = useStore();
@@ -22,20 +23,44 @@ const handleSearch = () => {
   } 
 };
 let searchResults = computed(() => store.getters.searchedMovies);
-console.log(searchResults);
+
+const handleClickOutside = (event) => {
+  if (!searchContainer.value.contains(event.target)) {
+    hideResults();
+  }
+};
 
 const selectMovie = (movie) => {
   // Action à réaliser lors de la sélection d'un film, par exemple, ajouter à une liste de favoris, etc.
-  console.log('Film sélectionné:', movie);
-  searchTerm.value = ''; // Effacer le terme de recherche une fois que le film est sélectionné
-  searchResults = []; // Effacer les résultats de la recherche
+  searchTerm.value = ''; 
+  searchResults = [];
+  // Rediriger vers la page du film
+  router.push({ name: 'Movie', params: { id: movie.id } });
 };
+
 </script>
 
 <style>
 .search-container {
   position: relative;
   margin: 20px;
+}
+
+.search-container input {
+  padding: 0.5rem 1rem;
+  border: 2px solid gray;
+  border-radius: 5px;
+  transition: border-color 0.3s ease-in-out;
+}
+
+/* Mise en valeur lors du focus */
+.search-container input:hover {
+  border-color: #00bcd4; /* Couleur de mise en valeur */
+}
+
+/* Mise en valeur lors du focus */
+.search-container input:focus {
+  border-color: #00bcd4; /* Couleur de mise en valeur */
 }
 
 .search-input {
@@ -51,12 +76,13 @@ const selectMovie = (movie) => {
   list-style: none;
   padding: 0;
   margin: 5px 0 0;
-  width: 300px;
+  width: 400px;
   position: absolute;
   background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 3;
 }
 
 .search-results li {
