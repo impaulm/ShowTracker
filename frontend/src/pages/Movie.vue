@@ -10,21 +10,26 @@
                         <h2>{{ movie.title }} ({{ formatYear(movie.release_date) }})</h2>
                     </el-row>
                     <el-row class="movie-time">
-                        <el-tag type="sucess" class="movie-duration">{{ formatDuration(movie.runtime) }}</el-tag>
+                        <el-tag type="success" class="movie-duration">{{ formatDuration(movie.runtime) }}</el-tag>
                     </el-row>
                     <el-row class="gender-list">
                         <el-tag type="info" v-for="(genre, index) in movie.genres" :key="index">{{ genre.name }}</el-tag>
                     </el-row>
                     <el-row v-if="loggedIn">
-                        <el-button type="warning" plain @click="watchList(user.userID, movie.id)">
+                        <el-button type="warning" @click="watchList(user.userID, movie.id)" plain >
                             <el-icon :size="30">
                                 <CollectionTag />
                             </el-icon>
                             Ajouter à la WatchList
                         </el-button>
-                        <el-button type="success" plain @click="watched(user.userID, movie.id)">
+                        <el-button type="success" @click="watched(user.userID, movie.id)" plain >
                             <el-icon :size="30">
                                 <CircleCheck />
+                            </el-icon>
+                        </el-button>
+                        <el-button type="warning" @click="liked(user.userID, movie.id)" plain >
+                            <el-icon :size="30">
+                                <Star />
                             </el-icon>
                         </el-button>
                     </el-row>
@@ -49,7 +54,7 @@
 import { computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
-import { watched, watchList } from '../api/api.js';
+import { watched, watchList, liked } from '../api/api.js';
 
 const store = useStore();
 const route = useRoute();
@@ -57,17 +62,15 @@ const route = useRoute();
 onMounted(() => {
     const movieId = route.params.id;
     store.dispatch('getMovie', movieId);
-    store.dispatch('getTrailers', movieId);
-});
+    store.dispatch('getTrailers', movieId);});
 
 const movie = computed(() => store.getters.movie);
 const trailers = computed(() => store.getters.trailers);
 const loadingMovie = computed(() => store.getters.loadingMovie);
 const loadingTrailers = computed(() => store.getters.loadingTrailers);
+const loggedIn = computed(() => store.getters.loggedIn);
 
 const user = computed(() => store.getters.user);
-
-const loggedIn = computed(() => store.getters.loggedIn);
 
 const formatYear = (value) => {
     const date = new Date(value);

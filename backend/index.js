@@ -26,41 +26,27 @@ const Users = sequelize.define('user', {
     password: { type: Sequelize.STRING },
 });
 
-// Modèle de la base de données Films
-const Films = sequelize.define('film', {
-    filmID: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-});
-
 // Modèle de la base de données UsersActions
 const UsersActions = sequelize.define('useraction', {
     watched: { type: Sequelize.BOOLEAN, defaultValue: false },
     liked: { type: Sequelize.BOOLEAN, defaultValue: false },
     towatch: { type: Sequelize.BOOLEAN, defaultValue: false },
-    userID: { type: Sequelize.INTEGER },
-    filmID: { type: Sequelize.INTEGER },
+    userID: { type: Sequelize.INTEGER, primaryKey: true },
+    filmID: { type: Sequelize.INTEGER, primaryKey: true },
 });
 
 // Films.id et User.id doivent être clés étrangères primaires dans UsersActions
 Users.hasMany(UsersActions, {
-    foreignKey: 'userID',   
+    foreignKey: 'userID',
 });
 UsersActions.belongsTo(Users, {
-    foreignKey: 'userID', 
-});
-// Relation entre Film et UsersActions (relation 1,n)
-Films.hasMany(UsersActions, {
-    foreignKey: 'filmID',    
-});
-UsersActions.belongsTo(Films, {
-    foreignKey: 'filmID', 
+    foreignKey: 'userID',
 });
 
 // Création de la base de données
 Users.sync({ force: true }).then(() => {
     console.log('Table Users créée');
 });
-
-Films.sync({ force: true }).then(() => console.log('Table Films créée'));
 
 UsersActions.sync({ force: true }).then(() => console.log('Table UsersActions créée'));
 
@@ -73,14 +59,14 @@ app.get('/', async (req, res) => {
 // Récupération des films populaires
 app.get('/popularmovies', async (req, res) => {
     try {
-        const response = await fetch(TMDB_URL+"/movie/popular?language=fr-FR&page=1", {
+        const response = await fetch(TMDB_URL + "/movie/popular?language=fr-FR&page=1", {
             method: 'GET',
             headers: {
                 accept: 'application/json',
-                Authorization: 'Bearer '+TMDB_API_KEY
+                Authorization: 'Bearer ' + TMDB_API_KEY
             }
         });
-        
+
         const data = await response.json();
         res.json(data);
     } catch (error) {
@@ -90,14 +76,14 @@ app.get('/popularmovies', async (req, res) => {
 });
 
 // Récupération du film avec son ID
-app.get('/movie/:id', async (req,res) => {
+app.get('/movie/:id', async (req, res) => {
     const id = req.params.id;
     try {
-        const response = await fetch(TMDB_URL+"/movie/"+id+"?language=fr-FR", {
+        const response = await fetch(TMDB_URL + "/movie/" + id + "?language=fr-FR", {
             method: 'GET',
             headers: {
                 accept: 'application/json',
-                Authorization: 'Bearer '+TMDB_API_KEY
+                Authorization: 'Bearer ' + TMDB_API_KEY
             }
         });
         const data = await response.json();
@@ -109,14 +95,14 @@ app.get('/movie/:id', async (req,res) => {
 });
 
 // Récupération des trailers du film avec son ID
-app.get('/movie/:id/videos', async (req,res) => {
+app.get('/movie/:id/videos', async (req, res) => {
     const id = req.params.id;
     try {
-        const response = await fetch(TMDB_URL+"/movie/"+id+"/videos?language=fr-FR", {
+        const response = await fetch(TMDB_URL + "/movie/" + id + "/videos?language=fr-FR", {
             method: 'GET',
             headers: {
                 accept: 'application/json',
-                Authorization: 'Bearer '+TMDB_API_KEY
+                Authorization: 'Bearer ' + TMDB_API_KEY
             }
         });
         const data = await response.json();
@@ -128,7 +114,7 @@ app.get('/movie/:id/videos', async (req,res) => {
 });
 
 // Récupération des films dans towatch de l'utilisateur avec l'userID
-app.get('/watchlist/:id', async(req, res) => {
+app.get('/watchlist/:id', async (req, res) => {
     const userId = req.params.id;
     try {
         const response = await UsersActions.findAll({
@@ -136,17 +122,35 @@ app.get('/watchlist/:id', async(req, res) => {
             where: {
                 userID: userId,
                 towatch: true,
-            }    
+            }
         });
-        res.status(200).send(response);
+        res.status(200).json(response);
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error with getwatchlist');
     }
-})
+});
 
-// Récupération des films vues de l'utilisateur avec l'userID
-app.get('/watchlist/:id', async(req, res) => {
+// Ajout ou mise à jour de la liste towatch de l'utilisateur
+app.post('/addorupdatewatchlist', async (req, res) => {
+    const { userId, filmId } = req.body;
+    try {
+        const [userMovie, created] = await UsersActions.findOrCreate({
+            where: {userID: userId,filmID: filmId},
+            defaults: {userID: userId,filmID: filmId,towatch: true,}
+        });
+        if (!created) {
+            await UsersActions.update({ towatch: !userMovie.towatch }, { where: { userID: userMovie.userID, filmID: userMovie.filmID } });
+            res.status(200).json({ message: 'Watchlist updated successfully.' });
+        } 
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error with addorupdatewatchlist function' });
+    }
+});
+
+// Récupération des films dans watched de l'utilisateur avec l'userID
+app.get('/watched/:id', async (req, res) => {
     const userId = req.params.id;
     try {
         const response = await UsersActions.findAll({
@@ -154,7 +158,7 @@ app.get('/watchlist/:id', async(req, res) => {
             where: {
                 userID: userId,
                 watched: true,
-            }    
+            }
         });
         res.status(200).send(response);
     } catch (error) {
@@ -163,29 +167,60 @@ app.get('/watchlist/:id', async(req, res) => {
     }
 });
 
-// Test s'il existe une ligne dans la table UserActions avec cet utilisateur pour ce film
-app.post('/testwatchlist', async(req, res) => {
-    const { userId, movieId } = req.body;
+// Ajout ou mise à jour de la liste watched de l'utilisateur
+app.post('/addorupdatewatched', async (req, res) => {
+    const { userId, filmId } = req.body;
+    console.log(userId, filmId);
+    try {
+        const [userMovie, created] = await UsersActions.findOrCreate({
+            where: {userID: userId,filmID: filmId},
+            defaults: {userID: userId,filmID: filmId, watched: true,}
+        });
+        if (!created) {
+            await UsersActions.update({ watched: !userMovie.watched }, { where: { userID: userMovie.userID, filmID: userMovie.filmID } });
+            res.status(200).json({ message: 'Watchlist updated successfully.' });
+        } 
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'Internal server error with addorupdatewatched function' });
+    }
+});
+
+// Récupération des films dans liked de l'utilisateur avec l'userID
+app.get('/liked/:id', async (req, res) => {
+    const userId = req.params.id;
     try {
         const response = await UsersActions.findAll({
+            attributes: ['filmID'],
             where: {
                 userID: userId,
-                movieID: movieId,
-            }    
+                liked: true,
+            }
         });
         res.status(200).send(response);
     } catch (error) {
         console.error(error);
-        res.status(500).send('Internal Server Error with testwatchlist');
+        res.status(500).send('Internal Server Error with getlikedmovie');
     }
 });
 
-
-
-// Ajout d'un film à voir dans towatch avec userId et movieID
-
-// Ajout d'un film vue dans la watchedlist avec userId et movieID
-
+// Ajout ou mise à jour de la liste liked de l'utilisateur
+app.post('/addorupdateliked', async (req, res) => {
+    const { userId, filmId } = req.body;
+    try {
+        const [userMovie, created] = await UsersActions.findOrCreate({
+            where: {userID: userId,filmID: filmId},
+            defaults: {userID: userId,filmID: filmId, liked: true,}
+        });
+        if (!created) {
+            await UsersActions.update({ liked: !userMovie.liked }, { where: { userID: userMovie.userID, filmID: userMovie.filmID } });
+            res.status(200).json({ message: 'Watchlist updated successfully.' });
+        } 
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'Internal server error with addorupdateliked function' });
+    }
+});
 
 // Création d'un utilisateur
 app.post('/register', async (req, res) => {
@@ -206,7 +241,6 @@ app.post('/register', async (req, res) => {
 // Connexion d'un utilisateur
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-
     try {
         const users = await Users.findAll({
             where: {
@@ -219,17 +253,16 @@ app.post('/login', async (req, res) => {
         } else {
             res.status(403).send('Connexion impossible');
         }
+        console.log(users);
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }
 });
-
-
 
 /* Démarrage serveur */
 const server = app.listen(3000, () => {
     console.log('Serveur backend démarré !')
 })
 
-const io = new Server(server, { cors: { origin:['http://localhost:5173', 'http://localhost:5173'] } });
+const io = new Server(server, { cors: { origin: ['http://localhost:5173', 'http://localhost:5173'] } });
 io.on('connection', socket => console.log('Connection ' + socket.id));

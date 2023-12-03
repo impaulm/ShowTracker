@@ -36,39 +36,93 @@ export const getTrailersById = async(id) => {
   }
 }
 
-export const getWatchListMovie = async(id) =>  {
-  if(!id) return;
+export const getWatchListMovie = async (id) => {
+  if (!id) return;
   try {
-    const response = await axios.get(BDD_URL+"/watchlist/"+id)
+    const moviesID = await axios.get(BDD_URL + "/watchlist/" + id);
+    const response = await Promise.all(
+      moviesID.data.map(async (movieId) => {
+        const movie = await getMovieById(movieId.filmID);
+        return movie;
+      })
+    );
     return response;
   } catch (error) {
-    
+    console.error(error);
+  }
+};
+
+
+export const getWatchedMovie = async(id) =>  {
+  if (!id) return;
+  try {
+    const moviesID = await axios.get(BDD_URL + "/watched/" + id);
+    const response = await Promise.all(
+      moviesID.data.map(async (movieId) => {
+        const movie = await getMovieById(movieId.filmID);
+        return movie;
+      })
+    );
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.error(error);
   }
 }
 
-export const getWatchedMovie = async(id) =>  {
-  if(!id) return;
+export const getLikedMovie = async(id) =>  {
+  if (!id) return;
   try {
-    const response = await axios.get(BDD_URL+"/watchedmovie/"+id)
+    const moviesID = await axios.get(BDD_URL + "/liked/" + id);
+    const response = await Promise.all(
+      moviesID.data.map(async (movieId) => {
+        const movie = await getMovieById(movieId.filmID);
+        return movie;
+      })
+    );
     return response;
   } catch (error) {
-    
+    console.error(error);
+  }
+}
+
+export const watchList = async(userId, movieId) => {
+  if(!userId || !movieId) return;
+  try {
+      const addorwatchlist = await axios.post(BDD_URL+"/addorupdatewatchlist",{
+        userId: userId,
+        filmId: movieId,
+      });
+      return addorwatchlist.data.etat;
+  } catch (error) {
+    console.log(error);
   }
 }
 
 export const watched = async(userId, movieId) => {
   if(!userId || !movieId) return;
   try {
-    const response = await axios.post(BDD_URL+"/testwatchlist",{
-      userId: userId,
-      movieId: movieId,
-    });
+      const addorwatched = await axios.post(BDD_URL+"/addorupdatewatched",{
+        userId: userId,
+        filmId: movieId,
+      });
+      return addorwatched.data.etat;
   } catch (error) {
-    
+    console.log(error); 
+  }
+} 
+
+export const liked = async(userId, movieId) => {
+  if(!userId || !movieId) return;
+  try {
+      const addorlike = await axios.post(BDD_URL+"/addorupdatelike",{
+        userId: userId,
+        filmId: movieId,
+      });
+      return addorlike.data.etat;
+  } catch (error) {
+    console.log(error);
   }
 }
 
-export const watchList = async(userId, movieId) => {
-
-}
 
