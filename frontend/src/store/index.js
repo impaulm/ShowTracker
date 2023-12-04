@@ -23,6 +23,9 @@ export const store = createStore({
             console.log(state.searchedMovies);
             return state.searchedMovies;
         },
+        clearSearchedMovies: state => {
+            return state.searchedMovies;
+        },
         loggedIn: state => {
             return state.loggedIn;
         },
@@ -53,6 +56,11 @@ export const store = createStore({
         getSearchedMovies (state, searchedMovies) {
             state.searchedMovies = searchedMovies
         },
+
+        setClearSearchedMovies (state) {
+            state.searchedMovies = [];
+        },
+
         login (state, username) {
             state.loggedIn = true;
             state.username = username;
@@ -87,6 +95,7 @@ export const store = createStore({
             commit('getPopularMovies', response.results)
         },
         async loadSearchedMovies ({ commit }, searchedMovies) {
+            commit('setClearSearchedMovies');
             const response = await getSearchedMovie(searchedMovies);
             commit('getSearchedMovies', response)
         },
