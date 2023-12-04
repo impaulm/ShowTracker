@@ -55,6 +55,7 @@ import { computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
 import { watched, watchList, liked } from '../api/api.js';
+import io from 'socket.io-client';
 
 const store = useStore();
 const route = useRoute();
@@ -62,7 +63,8 @@ const route = useRoute();
 onMounted(() => {
     const movieId = route.params.id;
     store.dispatch('getMovie', movieId);
-    store.dispatch('getTrailers', movieId);});
+    store.dispatch('getTrailers', movieId);
+});
 
 const movie = computed(() => store.getters.movie);
 const trailers = computed(() => store.getters.trailers);

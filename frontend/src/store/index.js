@@ -52,46 +52,72 @@ export const store = createStore({
     },
 
     mutations: {
-        getPopularMovies (state, popularMovies) {
+        getPopularMovies(state, popularMovies) {
             state.popularMovies = popularMovies
         },
-        login (state, user) {
+        login(state, user) {
             state.loggedIn = true;
             state.user = user;
         },
-        logout (state) {
+        logout(state) {
             state.loggedIn = false;
             state.user = null;
         },
 
-        setLoadingMovie (state, loadingMovie) {
+        setLoadingMovie(state, loadingMovie) {
             state.loadingMovie = loadingMovie
         },
 
-        setLoadingTrailers (state, loadingTrailers) {
+        setLoadingTrailers(state, loadingTrailers) {
             state.loadingTrailers = loadingTrailers
         },
 
-        getMovie (state, movie) {
+        getMovie(state, movie) {
             state.movie = movie
             state.loadingMovie = false
         },
-        
-        getTrailers (state, trailers) {
+
+        getTrailers(state, trailers) {
             state.trailers = trailers
             state.loadingTrailers = false
         },
 
-        getWatchListMovie (state, watchList){
+        getWatchListMovie(state, watchList) {
             state.watchList = watchList;
         },
 
-        getWatchedMovie (state, watchedMovie){
+        addMovieToWatchList(state, newMovie) {
+            state.watchList.push(newMovie);
+        },
+
+        removeMovieFromWatchList(state, movieId) {
+            state.watchList = state.watchList.filter(movie => movie.id !== movieId);
+        },
+
+        getWatchedMovie(state, watchedMovie) {
             state.watchedMovie = watchedMovie;
         },
-        getLikedMovie (state, likedMovie){
+
+        addMovieToWatchedMovie(state, newMovie) {
+            state.watchedMovie.push(newMovie);
+        },
+
+        removeMovieFromWatchedMovie(state, movieId) {
+            state.watchedMovie = state.watchedMovie.filter(movie => movie.id !== movieId);
+        },
+
+        getLikedMovie(state, likedMovie) {
             state.likedMovie = likedMovie;
-        }
+        },
+
+        addMovieToLikedMovie(state, newMovie) {
+            state.likedMovie.push(newMovie);
+        },
+
+        removeMovieFromLikedMovie(state, movieId) {
+            state.likedMovie = state.likedMovie.filter(movie => movie.id !== movieId);
+        },
+
     },
 
     actions: {
@@ -104,38 +130,61 @@ export const store = createStore({
             commit('logout');
         },
 
-        async loadPopularMovies ({ commit }) {
+        async loadPopularMovies({ commit }) {
             const response = await getPopularMovies();
             commit('getPopularMovies', response.results)
         },
 
-        async getMovie ({ commit }, movieId) {
-            commit('setLoadingMovie',true);
+        async getMovie({ commit }, movieId) {
+            commit('setLoadingMovie', true);
             const response = await getMovieById(movieId);
             commit('getMovie', response)
         },
 
 
-        async getTrailers ({ commit }, movieId) {
-            commit('setLoadingTrailers',true);
+        async getTrailers({ commit }, movieId) {
+            commit('setLoadingTrailers', true);
             const response = await getTrailersById(movieId);
             commit('getTrailers', response)
         },
 
-        async getWatchListMovie ({commit}, userId)
-        {
+        async getWatchListMovie({ commit }, userId) {
             const response = await getWatchListMovie(userId);
             commit('getWatchListMovie', response)
         },
 
-        async getWatchedMovie ({commit}, userId){
+        addMovieToWatchList({ commit }, newMovie) {
+            commit('addMovieToWatchList', newMovie)
+        },
+
+        removeMovieFromWatchList({ commit }, movieId) {
+            commit('removeMovieFromWatchList', movieId)
+        },
+
+        async getWatchedMovie({ commit }, userId) {
             const response = await getWatchedMovie(userId);
             commit('getWatchedMovie', response)
         },
 
-        async getLikedMovie ({commit}, userId){
+        addMovieToWatched({ commit }, newMovie) {
+            commit('addMovieToWatchedMovie', newMovie)
+        },
+
+        removeMovieFromWatched({ commit }, movieId) {
+            commit('removeMovieFromWatchedMovie', movieId)
+        },
+
+        async getLikedMovie({ commit }, userId) {
             const response = await getLikedMovie(userId);
             commit('getLikedMovie', response)
+        },
+
+        addMovieToLiked({ commit }, newMovie) {
+            commit('addMovieToLikedMovie', newMovie)
+        },
+
+        removeMovieFromLiked({ commit }, movieId) {
+            commit('removeMovieFromLikedMovie', movieId)
         },
     }
 });

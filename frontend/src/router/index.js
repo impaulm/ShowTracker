@@ -36,6 +36,7 @@ export const router = createRouter({
             name: 'Watchlist',
             component: Watchlist,
         },
+        { path: '/:pathMatch(.*)*', redirect: '/' },
     ],
     history: createWebHistory(),
 });

@@ -78,6 +78,11 @@ app.get('/popularmovies', async (req, res) => {
 // Récupération du film avec son ID
 app.get('/movie/:id', async (req, res) => {
     const id = req.params.id;
+    const response = await getMovieById(id);
+    res.json(response);
+});
+
+const getMovieById = async (id) => {
     try {
         const response = await fetch(TMDB_URL + "/movie/" + id + "?language=fr-FR", {
             method: 'GET',
@@ -87,12 +92,12 @@ app.get('/movie/:id', async (req, res) => {
             }
         });
         const data = await response.json();
-        res.json(data);
+        return data;
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error with movie');
     }
-});
+}
 
 // Récupération des trailers du film avec son ID
 app.get('/movie/:id/videos', async (req, res) => {
@@ -136,13 +141,24 @@ app.post('/addorupdatewatchlist', async (req, res) => {
     const { userId, filmId } = req.body;
     try {
         const [userMovie, created] = await UsersActions.findOrCreate({
-            where: {userID: userId,filmID: filmId},
-            defaults: {userID: userId,filmID: filmId,towatch: true,}
+            where: { userID: userId, filmID: filmId },
+            defaults: { userID: userId, filmID: filmId, towatch: true, }
         });
         if (!created) {
             await UsersActions.update({ towatch: !userMovie.towatch }, { where: { userID: userMovie.userID, filmID: userMovie.filmID } });
+            if (!userMovie.towatch == true) {
+                const movie = await getMovieById(filmId);
+                io.emit('addwatchlist', { movie });
+            } else {
+                io.emit('removewatchlist', { filmId });
+            }
             res.status(200).json({ message: 'Watchlist updated successfully.' });
-        } 
+        } else {
+            const movie = await getMovieById(filmId);
+            io.emit('addwatchlist', { movie });
+        }
+
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error with addorupdatewatchlist function' });
@@ -173,13 +189,22 @@ app.post('/addorupdatewatched', async (req, res) => {
     console.log(userId, filmId);
     try {
         const [userMovie, created] = await UsersActions.findOrCreate({
-            where: {userID: userId,filmID: filmId},
-            defaults: {userID: userId,filmID: filmId, watched: true,}
+            where: { userID: userId, filmID: filmId },
+            defaults: { userID: userId, filmID: filmId, watched: true, }
         });
         if (!created) {
             await UsersActions.update({ watched: !userMovie.watched }, { where: { userID: userMovie.userID, filmID: userMovie.filmID } });
+            if (!userMovie.watched == true) {
+                const movie = await getMovieById(filmId);
+                io.emit('addwatched', { movie });
+            } else {
+                io.emit('removewatched', { filmId });
+            }
             res.status(200).json({ message: 'Watchlist updated successfully.' });
-        } 
+        } else {
+            const movie = await getMovieById(filmId);
+            io.emit('addwatched', { movie });
+        }
     } catch (error) {
         console.error(error);
         res.status(500).send({ message: 'Internal server error with addorupdatewatched function' });
@@ -209,13 +234,22 @@ app.post('/addorupdateliked', async (req, res) => {
     const { userId, filmId } = req.body;
     try {
         const [userMovie, created] = await UsersActions.findOrCreate({
-            where: {userID: userId,filmID: filmId},
-            defaults: {userID: userId,filmID: filmId, liked: true,}
+            where: { userID: userId, filmID: filmId },
+            defaults: { userID: userId, filmID: filmId, liked: true, }
         });
         if (!created) {
             await UsersActions.update({ liked: !userMovie.liked }, { where: { userID: userMovie.userID, filmID: userMovie.filmID } });
+            if (!userMovie.liked == true) {
+                const movie = await getMovieById(filmId);
+                io.emit('addliked', { movie });
+            } else {
+                io.emit('removeliked', { filmId });
+            }
             res.status(200).json({ message: 'Watchlist updated successfully.' });
-        } 
+        } else {
+            const movie = await getMovieById(filmId);
+            io.emit('addliked', { movie });
+        }
     } catch (error) {
         console.error(error);
         res.status(500).send({ message: 'Internal server error with addorupdateliked function' });
@@ -264,5 +298,5 @@ const server = app.listen(3000, () => {
     console.log('Serveur backend démarré !')
 })
 
-const io = new Server(server, { cors: { origin: ['http://localhost:5173', 'http://localhost:5173'] } });
+const io = new Server(server, { cors: { origin: ['http://127.0.0.1:5173', 'http://localhost:5173'] } });
 io.on('connection', socket => console.log('Connection ' + socket.id));

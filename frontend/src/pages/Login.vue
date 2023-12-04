@@ -1,22 +1,20 @@
 <template>
-    <el-container direction="vertical">
-        <el-row>
-            <el-col :span="8" :offset="8">
-                <el-card>
-                    <el-form @submit.prevent="login">
-                        <el-form-item label="Nom d'utilisateur">
-                            <el-input type="text" id="username" v-model="form.username"/>
-                        </el-form-item>
+    <el-row class="form">
+        <el-col :span="8" :offset="8">
+            <el-card>
+                <el-form @submit.prevent="login">
+                    <el-form-item label="Nom d'utilisateur">
+                        <el-input type="text" id="username" v-model="form.username" />
+                    </el-form-item>
 
-                        <el-form-item label="Mot de passe">
-                            <el-input type="password" id="password" v-model="form.password"/>
-                        </el-form-item>
-                        <el-button type="info" native-type="submit">Se connecter</el-button>
-                    </el-form>
-                </el-card>
-            </el-col>
-        </el-row>
-    </el-container>
+                    <el-form-item label="Mot de passe">
+                        <el-input type="password" id="password" v-model="form.password" />
+                    </el-form-item>
+                    <el-button type="info" native-type="submit">Se connecter</el-button>
+                </el-form>
+            </el-card>
+        </el-col>
+    </el-row>
 </template>
 
 <script setup>
@@ -38,9 +36,9 @@ const login = async () => {
     const hashedPassword = sha256(password);
 
     try {
-        const response = await axios.post('http://localhost:3000/login', { 
-            username: username, 
-            password: hashedPassword 
+        const response = await axios.post('http://localhost:3000/login', {
+            username: username,
+            password: hashedPassword
         });
         store.dispatch('login', response.data);
         router.push({ name: 'Home' });
@@ -49,3 +47,9 @@ const login = async () => {
     }
 };
 </script>
+
+<style scoped>
+.form{
+    margin-top: 10vh;
+}
+</style>

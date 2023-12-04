@@ -1,7 +1,8 @@
 <template>
     <div class="container">
+        <h1>Bienvenue sur ShowTracker</h1>
         <div class="carousel-container">
-            <el-carousel :interval="2000" type="card" height="100vh">
+            <el-carousel :interval="2000" type="card" height="75vh">
                 <el-carousel-item class="carousel-item" v-for="(movie, index) in popularMovies" :key="index">
                     <router-link :to="{ name: 'Movie', params: { id: movie.id } }">
                         <img class="poster-movie" :src="getImageUrl(movie.poster_path)" :alt="movie.title">
@@ -17,7 +18,7 @@
     width: 80vw;
     margin-left: auto;
     margin-right: auto;
-    height: 100vh;
+    text-align: center;
 }
 .carousel-container {
     text-align: center;

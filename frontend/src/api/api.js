@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+
 const BDD_URL = 'http://localhost:3000';
 
 export const getPopularMovies = async () => {
@@ -40,6 +41,7 @@ export const getWatchListMovie = async (id) => {
   if (!id) return;
   try {
     const moviesID = await axios.get(BDD_URL + "/watchlist/" + id);
+
     const response = await Promise.all(
       moviesID.data.map(async (movieId) => {
         const movie = await getMovieById(movieId.filmID);
@@ -63,7 +65,6 @@ export const getWatchedMovie = async(id) =>  {
         return movie;
       })
     );
-    console.log(response);
     return response;
   } catch (error) {
     console.error(error);
@@ -115,7 +116,7 @@ export const watched = async(userId, movieId) => {
 export const liked = async(userId, movieId) => {
   if(!userId || !movieId) return;
   try {
-      const addorlike = await axios.post(BDD_URL+"/addorupdatelike",{
+      const addorlike = await axios.post(BDD_URL+"/addorupdateliked",{
         userId: userId,
         filmId: movieId,
       });
