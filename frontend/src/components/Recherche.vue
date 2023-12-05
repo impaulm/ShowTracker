@@ -1,42 +1,47 @@
 <template>
   <div class="search-container">
-    <input v-model="searchTerm" @input="handleSearch" @click="showResults" placeholder="Rechercher un film">
-      <ul class="search-results">
-        <li v-for="(movie, index) in searchResults" :key="index" @click="selectMovie(movie)">
-          {{ movie.title }}
-        </li>
-      </ul>
+    <input v-model="searchTerm" @input="handleSearch" @click="showResults" placeholder="Rechercher un film" />
+    <ul class="search-results">
+      <li v-for="(movie, index) in searchResults" :key="index" @click="selectMovie(movie)">
+        {{ movie.title }}
+      </li>
+    </ul>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
-import { routerKey } from 'vue-router';
+import { computed, onBeforeMount, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 const store = useStore();
 const searchTerm = ref('');
+const router = useRouter();
 const handleSearch = () => {
-  if (searchTerm.value.trim().length >= 3) {
-    // console.log('Recherche de films pour:', searchTerm.value.trim());
+  if (searchTerm.value.trim().length >= 0) {
+    console.log('Recherche de films pour:', searchTerm.value.trim());
     store.dispatch('loadSearchedMovies', searchTerm.value.trim());
-  } 
+  }
 };
 let searchResults = computed(() => store.getters.searchedMovies);
 
-const handleClickOutside = (event) => {
-  if (!searchContainer.value.contains(event.target)) {
-    hideResults();
-  }
-};
+
 
 const selectMovie = (movie) => {
   // Action à réaliser lors de la sélection d'un film, par exemple, ajouter à une liste de favoris, etc.
-  searchTerm.value = ''; 
-  searchResults = [];
-  // Rediriger vers la page du film
+  console.log('Film sélectionné:', movie.id, movie.title);
+
+  searchTerm.value = '';
+
+  store.commit('clearSearchedMovies');
+
   router.push({ name: 'Movie', params: { id: movie.id } });
 };
+
+onBeforeMount(() => {
+  searchResults.value = [];
+  // store.commit('setClearSearchedMovies', []);
+});
 
 </script>
 
@@ -55,12 +60,14 @@ const selectMovie = (movie) => {
 
 /* Mise en valeur lors du focus */
 .search-container input:hover {
-  border-color: #00bcd4; /* Couleur de mise en valeur */
+  border-color: #00bcd4;
+  /* Couleur de mise en valeur */
 }
 
 /* Mise en valeur lors du focus */
 .search-container input:focus {
-  border-color: #00bcd4; /* Couleur de mise en valeur */
+  border-color: #00bcd4;
+  /* Couleur de mise en valeur */
 }
 
 .search-input {
@@ -80,6 +87,7 @@ const selectMovie = (movie) => {
   position: absolute;
   background-color: #fff;
   border: 1px solid #ccc;
+  color: black;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   z-index: 3;

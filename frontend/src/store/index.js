@@ -25,6 +25,10 @@ export const store = createStore({
             console.log(state.searchedMovies);
             return state.searchedMovies;
         },
+        // clearSearchedMovies: state => {
+        //     console.log(state.searchedMovies);
+        //     return state.searchedMovies;
+        // },
         loggedIn: state => {
             return state.loggedIn;
         },
@@ -63,6 +67,7 @@ export const store = createStore({
         },
         getSearchedMovies (state, searchedMovies) {
             state.searchedMovies = searchedMovies
+            console.log(state.searchedMovies);
         },
         login(state, user) {
             state.loggedIn = true;
@@ -89,6 +94,10 @@ export const store = createStore({
         getTrailers(state, trailers) {
             state.trailers = trailers
             state.loadingTrailers = false
+        },
+
+        clearSearchedMovies (state) {
+            state.searchedMovies = [];
         },
 
         getWatchListMovie(state, watchList) {
@@ -135,8 +144,13 @@ export const store = createStore({
             commit('getPopularMovies', response.results)
         },
         async loadSearchedMovies ({ commit }, searchedMovies) {
+            // commit('setClearSearchedMovies');
             const response = await getSearchedMovie(searchedMovies);
-            commit('getSearchedMovies', response)
+            console.log(response);
+            commit('getSearchedMovies', response);
+        },
+        clearSearchedMovies ({ commit }) {
+            commit('clearSearchedMovies');
         },
         login: ({ commit }, user) => {
             localStorage.setItem('user', JSON.stringify(user));

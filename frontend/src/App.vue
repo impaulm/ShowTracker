@@ -72,6 +72,7 @@ const logout = () => {
     router.push({ name: 'Login' });
 };
 
+
 </script>
 
 <style scoped>

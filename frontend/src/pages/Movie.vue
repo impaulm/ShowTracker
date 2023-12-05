@@ -51,13 +51,23 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { watched, watchList, liked } from '../api/api.js';
 
 const store = useStore();
 const route = useRoute();
+const router = useRouter();
+
+watch(
+  () => router.currentRoute.value.params.id,
+  (newMovieId, oldMovieId) => {
+    // Charger les données du nouveau film lorsque l'ID du film change
+    store.dispatch('getMovie', newMovieId);
+    store.dispatch('getTrailers', newMovieId);
+  }
+);
 
 onMounted(() => {
     const movieId = route.params.id;
