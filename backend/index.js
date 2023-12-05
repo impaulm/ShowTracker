@@ -278,10 +278,22 @@ app.post('/addorupdateliked', async (req, res) => {
     }
 });
 
-// Création d'un utilisateur
 app.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
     try {
+        // Vérifier si le nom d'utilisateur existe déjà
+        const existingUsername = await Users.findOne({ username });
+        if (existingUsername) {
+            return res.status(400).json({ error: 'Le nom d\'utilisateur est déjà utilisé.' });
+        }
+
+        // Vérifier si l'e-mail existe déjà
+        const existingEmail = await Users.findOne({ email });
+        if (existingEmail) {
+            return res.status(400).json({ error: 'L\'e-mail est déjà utilisé.' });
+        }
+
+        // Si le nom d'utilisateur et l'e-mail ne sont pas déjà utilisés, créer un nouvel utilisateur
         const user = await Users.create({
             username,
             email,
@@ -293,6 +305,7 @@ app.post('/register', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
 
 // Connexion d'un utilisateur
 app.post('/login', async (req, res) => {
