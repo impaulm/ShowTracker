@@ -1,16 +1,16 @@
 <template>
   <div class="search-container">
-    <input v-model="searchTerm" @input="handleSearch" @click="showResults" placeholder="Rechercher un film">
-      <ul class="search-results">
-        <li v-for="(movie, index) in searchResults" :key="index" @click="selectMovie(movie)">
-          {{ movie.title }}
-        </li>
-      </ul>
+    <input v-model="searchTerm" @input="handleSearch" @click="showResults" placeholder="Rechercher un film" />
+    <ul class="search-results">
+      <li v-for="(movie, index) in searchResults" :key="index" @click="selectMovie(movie)">
+        {{ movie.title }}
+      </li>
+    </ul>
   </div>
 </template>
 
 <script setup>
-import { computed, onBeforeMount, onMounted, ref } from 'vue';
+import { computed, onBeforeMount, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -19,29 +19,28 @@ const searchTerm = ref('');
 const router = useRouter();
 const handleSearch = () => {
   if (searchTerm.value.trim().length >= 0) {
-    // console.log('Recherche de films pour:', searchTerm.value.trim());
+    console.log('Recherche de films pour:', searchTerm.value.trim());
     store.dispatch('loadSearchedMovies', searchTerm.value.trim());
-  } 
+  }
 };
 let searchResults = computed(() => store.getters.searchedMovies);
 
-const handleClickOutside = (event) => {
-  if (!searchContainer.value.contains(event.target)) {
-    store.commit('setClearSearchedMovies', []);
-  }
-};
+
 
 const selectMovie = (movie) => {
   // Action à réaliser lors de la sélection d'un film, par exemple, ajouter à une liste de favoris, etc.
   console.log('Film sélectionné:', movie.id, movie.title);
+
+  searchTerm.value = '';
+
+  store.commit('clearSearchedMovies');
+
   router.push({ name: 'Movie', params: { id: movie.id } });
-  searchTerm.value = ''; 
-  searchResults = [];
 };
 
 onBeforeMount(() => {
   searchResults.value = [];
-  store.commit('setClearSearchedMovies', []);
+  // store.commit('setClearSearchedMovies', []);
 });
 
 </script>
@@ -61,12 +60,14 @@ onBeforeMount(() => {
 
 /* Mise en valeur lors du focus */
 .search-container input:hover {
-  border-color: #00bcd4; /* Couleur de mise en valeur */
+  border-color: #00bcd4;
+  /* Couleur de mise en valeur */
 }
 
 /* Mise en valeur lors du focus */
 .search-container input:focus {
-  border-color: #00bcd4; /* Couleur de mise en valeur */
+  border-color: #00bcd4;
+  /* Couleur de mise en valeur */
 }
 
 .search-input {
