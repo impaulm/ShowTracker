@@ -13,6 +13,7 @@ export const store = createStore({
         watchList: [],
         watchedMovie: [],
         likedMovie: [],
+        
     },
 
     getters: {

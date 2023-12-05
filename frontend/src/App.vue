@@ -31,7 +31,7 @@
      </div> 
   </div>
   
-  <el-footer class="footer">ShowTracker ©2021 Created by <a href="127.0.0.1:5173">ShowTracker</a></el-footer>
+  <el-footer class="footer" >ShowTracker ©2023 Created by MISTOU Paul & DUTHIL Thomas</el-footer>
 </template>
 
 <script setup>
