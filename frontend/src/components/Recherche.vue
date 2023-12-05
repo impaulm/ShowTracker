@@ -29,7 +29,6 @@ let searchResults = computed(() => store.getters.searchedMovies);
 
 const selectMovie = (movie) => {
   // Action à réaliser lors de la sélection d'un film, par exemple, ajouter à une liste de favoris, etc.
-  console.log('Film sélectionné:', movie.id, movie.title);
 
   searchTerm.value = '';
 
@@ -37,11 +36,6 @@ const selectMovie = (movie) => {
 
   router.push({ name: 'Movie', params: { id: movie.id } });
 };
-
-onBeforeMount(() => {
-  searchResults.value = [];
-  // store.commit('setClearSearchedMovies', []);
-});
 
 </script>
 

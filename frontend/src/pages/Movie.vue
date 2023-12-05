@@ -60,20 +60,21 @@ const store = useStore();
 const route = useRoute();
 const router = useRouter();
 
-watch(
-  () => router.currentRoute.value.params.id,
-  (newMovieId, oldMovieId) => {
-    // Charger les données du nouveau film lorsque l'ID du film change
-    store.dispatch('getMovie', newMovieId);
-    store.dispatch('getTrailers', newMovieId);
+onMounted(async () => {
+    const movieId = route.params.id;
+    console.log(movieId);
+    await store.dispatch('getMovie', movieId);
+    await store.dispatch('getTrailers', movieId); 
+});
+
+watch( () => route.params, async (newParams, oldMovieId) => {
+    if (newParams.id) {
+        // Charger les données du nouveau film lorsque l'ID du film change
+        await store.dispatch('getMovie', newParams.id);
+        await store.dispatch('getTrailers', newParams.id);
+    }
   }
 );
-
-onMounted(() => {
-    const movieId = route.params.id;
-    store.dispatch('getMovie', movieId);
-    store.dispatch('getTrailers', movieId);
-});
 
 const movie = computed(() => store.getters.movie);
 const trailers = computed(() => store.getters.trailers);

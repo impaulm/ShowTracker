@@ -22,13 +22,8 @@ export const store = createStore({
             return state.popularMovies;
         },
         searchedMovies: state => {
-            console.log(state.searchedMovies);
             return state.searchedMovies;
         },
-        // clearSearchedMovies: state => {
-        //     console.log(state.searchedMovies);
-        //     return state.searchedMovies;
-        // },
         loggedIn: state => {
             return state.loggedIn;
         },
