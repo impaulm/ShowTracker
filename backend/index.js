@@ -21,7 +21,7 @@ const sequelize = new Sequelize('sqlite:database-shows.db');
 // Modèle de la base de données Users
 const Users = sequelize.define('user', {
     userID: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-    username: { type: Sequelize.STRING },
+    username: { type: Sequelize.STRING, unique: true },
     email: { type: Sequelize.STRING, unique: true },
     password: { type: Sequelize.STRING },
 });
