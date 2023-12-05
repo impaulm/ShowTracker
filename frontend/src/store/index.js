@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import { getPopularMovies, getMovieById, getTrailersById, getWatchListMovie, getWatchedMovie, getLikedMovie } from '../api/api';
+import { getPopularMovies, getMovieById, getTrailersById, getWatchListMovie, getWatchedMovie, getLikedMovie, getSearchedMovie } from '../api/api';
 
 export const store = createStore({
     state: {
@@ -9,16 +9,21 @@ export const store = createStore({
         loadingTrailers: true,
         loggedIn: localStorage.getItem('user') !== null,
         user: JSON.parse(localStorage.getItem('user')) || null,
-        trailers: null,
+        trailers: null,        
         watchList: [],
         watchedMovie: [],
         likedMovie: [],
-        
+        searchedMovies: [],
+
     },
 
     getters: {
         popularMovies: state => {
             return state.popularMovies;
+        },
+        searchedMovies: state => {
+            console.log(state.searchedMovies);
+            return state.searchedMovies;
         },
         loggedIn: state => {
             return state.loggedIn;
@@ -55,6 +60,9 @@ export const store = createStore({
     mutations: {
         getPopularMovies(state, popularMovies) {
             state.popularMovies = popularMovies
+        },
+        getSearchedMovies (state, searchedMovies) {
+            state.searchedMovies = searchedMovies
         },
         login(state, user) {
             state.loggedIn = true;
@@ -122,6 +130,14 @@ export const store = createStore({
     },
 
     actions: {
+        async loadPopularMovies ({ commit }) {
+            const response = await getPopularMovie();
+            commit('getPopularMovies', response.results)
+        },
+        async loadSearchedMovies ({ commit }, searchedMovies) {
+            const response = await getSearchedMovie(searchedMovies);
+            commit('getSearchedMovies', response)
+        },
         login: ({ commit }, user) => {
             localStorage.setItem('user', JSON.stringify(user));
             commit('login', user);
